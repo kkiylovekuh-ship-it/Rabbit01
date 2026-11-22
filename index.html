@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="吉備路ラン">
+<meta name="theme-color" content="#111418">
+<title>吉備路マラソン コースナビ</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="stylesheet" href="vendor/leaflet.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <header id="stats">
+    <div class="row main">
+      <div class="cell big"><span class="lbl">コース距離</span><span id="sKm" class="val">0.00</span><span class="unit">km</span></div>
+      <div class="cell big"><span class="lbl">経過時間</span><span id="sTime" class="val">0:00:00</span></div>
+    </div>
+    <div class="row">
+      <div class="cell"><span class="lbl">現在ペース</span><span id="sPace" class="val m">--'--"</span></div>
+      <div class="cell"><span class="lbl">平均ペース</span><span id="sAvg" class="val m">--'--"</span></div>
+      <div class="cell"><span class="lbl">残り</span><span id="sRemain" class="val m">42.20</span></div>
+      <div class="cell"><span class="lbl">ゴール予測</span><span id="sPred" class="val m">--:--</span></div>
+    </div>
+    <div id="info">
+      <div id="nextCut" class="pill">関門 --</div>
+      <div id="nextAid" class="pill">給水 --</div>
+    </div>
+    <div id="warn" class="hidden">⚠ コースから外れています <span id="warnDist"></span></div>
+  </header>
+  <div id="map"></div>
+  <div id="gpsBadge">GPS待機中</div>
+  <button id="btnCenter" class="fab" aria-label="現在地に戻る">◎</button>
+  <footer id="controls">
+    <button id="btnMenu" class="ctl">設定</button>
+    <button id="btnLaps" class="ctl">ラップ</button>
+    <button id="btnStart" class="ctl primary">スタート</button>
+    <button id="btnStop" class="ctl danger hidden">終了</button>
+  </footer>
+</div>
+
+<div id="sheetLaps" class="sheet hidden">
+  <div class="sheet-head"><h2>ラップ</h2><button class="close" data-close="sheetLaps">閉じる</button></div>
+  <table id="lapTable"><thead><tr><th>km</th><th>ラップ</th><th>累計</th><th>時刻</th></tr></thead><tbody></tbody></table>
+  <h3>関門（予定）</h3>
+  <table id="cutTable"><thead><tr><th>関門</th><th>km</th><th>閉鎖</th><th>通過</th></tr></thead><tbody></tbody></table>
+  <button id="btnGpx" class="wide">走行ログをGPXで保存</button>
+</div>
+
+<div id="sheetMenu" class="sheet hidden">
+  <div class="sheet-head"><h2>設定</h2><button class="close" data-close="sheetMenu">閉じる</button></div>
+  <label class="field">目標タイム
+    <input id="optTarget" type="text" inputmode="numeric" placeholder="4:30:00">
+  </label>
+  <label class="field chk"><input id="optVoice" type="checkbox" checked> 音声案内（1kmごとのラップ・給水所・関門）</label>
+  <label class="field">音声案内の間隔
+    <select id="optVoiceEvery"><option value="1">1kmごと</option><option value="2">2kmごと</option><option value="5">5kmごと</option></select>
+  </label>
+  <label class="field chk"><input id="optOffAlert" type="checkbox" checked> コース外れ警告（音声・アラーム音）</label>
+  <label class="field">コース外れと判定する距離
+    <select id="optOffDist"><option value="30">30m</option><option value="50" selected>50m</option><option value="80">80m</option></select>
+  </label>
+  <label class="field chk"><input id="optFollow" type="checkbox" checked> 地図を現在地に自動追従</label>
+  <hr>
+  <button id="btnTiles" class="wide">コース周辺の地図をオフライン保存</button>
+  <div id="tileProg" class="note"></div>
+  <button id="btnTestVoice" class="wide">音声テスト</button>
+  <button id="btnSim" class="wide">シミュレーション走行（デモ）</button>
+  <select id="optSimSpeed"><option value="20">20倍速</option><option value="60" selected>60倍速</option><option value="200">200倍速</option></select>
+  <hr>
+  <button id="btnReset" class="wide danger">記録をリセット</button>
+  <p class="note">
+    コースは2027年2月28日開催「そうじゃ吉備路マラソン」公式コースマップ（2026年10月公開）をもとに道路に沿って作成した概略ルートです。
+    実際のコース・関門時刻・給水所位置は当日の大会案内を優先してください。距離は公式の関門km地点に合わせて補正しています。<br>
+    iPhoneでは画面をロックするとGPSが止まります。走行中は画面を点けたままにしてください（スタート時に自動スリープ防止を試みます）。
+  </p>
+  <p class="note">地図: 国土地理院 / ルート作成: OpenStreetMap contributors</p>
+</div>
+
+<div id="toast" class="hidden"></div>
+
+<script src="vendor/leaflet.js"></script>
+<script src="course.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
